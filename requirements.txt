@@ -1,0 +1,101 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# AI Drug Discovery Pipeline — Requirements
+# PINNED to major.minor to prevent Colab / local mismatches (Gap #4 fix)
+# Last verified: April 2026
+#
+# INSTALL:
+#   pip install -r requirements.txt          # full install
+#   pip install -r requirements.txt --quiet  # quiet for Colab cells
+#
+# IMPORTANT — version discipline:
+#   NumPy 2.x BREAKS torch, rdkit, shap. Pin numpy<2.0.
+#   torch is NOT pinned here — install with CUDA variant:
+#     pip install torch --index-url https://download.pytorch.org/whl/cu121  (local RTX 3050)
+#     (Colab has torch pre-installed — don't reinstall)
+# ─────────────────────────────────────────────────────────────────────────────
+
+# ── Core scientific stack ────────────────────────────────────────────────────
+numpy>=1.24.0,<2.0.0          # MUST stay <2.0 — torch/rdkit/shap all break on 2.x
+pandas>=2.0.0,<3.0.0
+scipy>=1.11.0,<2.0.0
+scikit-learn>=1.4.0,<2.0.0
+matplotlib>=3.8.0,<4.0.0
+seaborn>=0.13.0,<1.0.0
+tqdm>=4.66.0
+
+# ── PyTorch (CUDA variant MUST be installed separately — see above) ──────────
+# torch>=2.2.0                 # DO NOT uncomment here — install with CUDA flag
+# torchaudio>=2.2.0            # DO NOT uncomment here
+torchvision>=0.17.0,<1.0.0    # OK to install via pip
+torch-geometric>=2.5.0        # GNN support for Phase 4
+
+# ── Bioinformatics & Chemistry ───────────────────────────────────────────────
+rdkit>=2023.9.1                # Molecular fingerprints, SMILES parsing
+biopython>=1.83                # PDB parsing, sequence handling
+cmapPy>=4.0.1                  # LINCS gctx loading (Colab Phase 3)
+pyarrow>=14.0.0                # Efficient parquet I/O
+
+# ── Deep Learning & NLP ─────────────────────────────────────────────────────
+transformers>=4.40.0,<5.0.0    # HuggingFace — BioGPT, BioGPT-Large
+sentence-transformers>=2.7.0   # PubMedBERT embeddings (CPU fallback)
+tokenizers>=0.19.0             # Required by transformers
+datasets>=2.18.0               # HuggingFace datasets utility
+accelerate>=0.29.0             # Required for transformers device placement
+
+# ── Knowledge Graph ──────────────────────────────────────────────────────────
+pykeen>=1.10.0,<2.0.0          # KG embeddings: TransE, RotatE
+torch-scatter>=2.1.2           # Required by PyKEEN
+torch-sparse>=0.6.18           # Required by PyKEEN
+
+# ── Explainability ───────────────────────────────────────────────────────────
+shap>=0.45.0,<1.0.0            # SHAP values for RF and neural models
+captum>=0.7.0                  # Integrated Gradients for PyTorch models
+
+# ── Drug Discovery ───────────────────────────────────────────────────────────
+admet-ai>=1.0.0                # 42 ADMET endpoints from SMILES
+vina>=1.2.5                    # AutoDock Vina Python bindings (Phase 5 local)
+openbabel-wheel>=3.1.1         # SMILES ↔ 3D structure conversion (Vina prep)
+
+# ── Survival Analysis (Phase 1 validation) ───────────────────────────────────
+lifelines>=0.27.0,<1.0.0       # Kaplan-Meier, log-rank test
+scikit-survival>=0.22.0        # Cox PH model, time-to-event
+
+# ── Data I/O ─────────────────────────────────────────────────────────────────
+requests>=2.31.0
+openpyxl>=3.1.0                # Reading GDSC2 .xlsx files
+xlrd>=2.0.1
+
+# ── Testing ──────────────────────────────────────────────────────────────────
+pytest>=8.1.0
+pytest-cov>=5.0.0
+
+# ── API (Phase 7 — deferred) ─────────────────────────────────────────────────
+# flask>=3.0.0                 # Uncomment when API development begins
+# flask-cors>=4.0.0
+
+# ─────────────────────────────────────────────────────────────────────────────
+# COLAB-ONLY (do NOT install locally — large and slow):
+# ─────────────────────────────────────────────────────────────────────────────
+# AlphaFold3 — install from source in Colab:
+#   !git clone --depth 1 https://github.com/google-deepmind/alphafold3
+#   !pip install -e ./alphafold3 --quiet
+#
+# BioGPT-Large — loads automatically via transformers on Colab:
+#   from transformers import AutoModel
+#   AutoModel.from_pretrained("microsoft/BioGPT-Large")  # ~1.5 GB
+#
+# Paper-grade results note (Gap #2):
+#   BioGPT base is used locally (RTX 3050 4GB).
+#   For final paper results, BioGPT-Large MUST be run on Kaggle (P100 16GB).
+#   Set config.LLM_MODEL_NAME = config.LLM_MODEL_NAME_COLAB in Kaggle notebook.
+#   Similarly, AF3 (not Vina) must be used for paper docking results.
+#   See: colab/colab_phase5_af3.py and colab/colab_phase3_full_mmdrp.py
+# ─────────────────────────────────────────────────────────────────────────────
+
+# ─────────────────────────────────────────────────────────────────────────────
+# VERSION LOCK for reproducibility:
+# After your environment works, freeze exact versions:
+#   pip freeze > requirements_locked.txt
+# Commit requirements_locked.txt alongside this file.
+# Use requirements_locked.txt for exact reproduction.
+# ─────────────────────────────────────────────────────────────────────────────

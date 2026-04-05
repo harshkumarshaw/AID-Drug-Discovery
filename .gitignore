@@ -1,0 +1,140 @@
+# ────────────────────────────────────────────────────────────────────────────
+# AI Drug Discovery Pipeline — .gitignore
+# Rule: commit code and docs; NEVER commit data or model weights
+# ────────────────────────────────────────────────────────────────────────────
+
+# ─── Python ──────────────────────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+.eggs/
+.Python
+*.pyo
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# ─── Jupyter ─────────────────────────────────────────────────────────────────
+.ipynb_checkpoints/
+# Keep notebooks but ignore their output cells (large, noisy diffs)
+# Use: jupyter nbconvert --clear-output --inplace notebooks/*.ipynb
+
+# ─── Virtual environments ─────────────────────────────────────────────────────
+venv/
+.venv/
+env/
+.env/
+conda-env/
+
+# ─── Secrets & API keys (NEVER commit these) ─────────────────────────────────
+.env
+.env.*
+secrets.py
+*_credentials.json
+api_keys.txt
+*.pem
+*.key
+
+# ─── Large data files — ALL raw data stays local or on Drive ─────────────────
+# Genomics
+*.gctx
+*.gct
+*.bam
+*.bai
+*.vcf
+*.vcf.gz
+*.maf
+*.bed
+*.gtf
+*.fastq
+*.fastq.gz
+*.fasta
+
+# Molecular
+*.pdbqt          # Vina input files (generated from .pdb)
+*.mol2
+*.sdf
+
+# Tabular data (large external downloads)
+# NOTE: small config CSVs (cleaned_clinical_data.csv) ARE committed if <5MB
+data/external/
+data/raw/
+TCGA/raw/
+LINCS/modzs.gctx
+LINCS/*.gctx
+
+# Model weights and checkpoints
+models/
+*.pt
+*.pth
+*.pkl
+*.h5
+*.hdf5
+*.onnx
+*.bin
+!tests/fixtures/   # Keep tiny test fixtures (if any)
+
+# AlphaFold3 outputs (large structure files)
+af3_inputs/
+af3_outputs/
+*.cif
+
+# ─── Data directories with large files ───────────────────────────────────────
+# Keep the directory structure but not the data files themselves
+data/external/*
+data/raw/*
+data/targets/*.pdbqt
+!data/external/.gitkeep
+!data/raw/.gitkeep
+!data/targets/.gitkeep
+!data/processed/.gitkeep
+
+# DO commit these small processed files if they exist and are <5MB:
+# data/processed/cleaned_clinical_data.csv
+# data/processed/cleaned_biospecimen_data.csv
+# But exclude any TCGA merged outputs (can be 100s MB):
+data/processed/tcga_lihc_rnaseq.csv
+data/processed/tcga_lihc_mutations.maf
+data/processed/tcga_lihc_methylation.csv
+data/processed/tcga_lihc_cnv.csv
+
+# ─── Results and logs ────────────────────────────────────────────────────────
+results/
+logs/
+*.log
+wandb/
+mlruns/
+*.csv.bak
+
+# ─── Drug Repurposing large archives ─────────────────────────────────────────
+Drug Repurposing/ChEMBL-35/
+Drug Repurposing/*.tar.gz
+Drug Repurposing/*.zip
+Drug Repurposing/DeepDRA-main.zip
+
+# ─── E-MTAB (very large variant TSV) ─────────────────────────────────────────
+E-MTAB-5902/*.tsv
+E-MTAB-5902/*.vcf
+
+# ─── OS & editor files ───────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+desktop.ini
+.idea/
+.vscode/settings.json
+*.swp
+*.swo
+*~
+
+# ─── What IS committed (kept even if pattern above matches) ──────────────────
+# Code: pipeline/, scripts/, colab/, tests/, api/
+# Config: config.py, requirements.txt, setup.py
+# Docs: docs/, CLAUDE.md, README.md, .claude/
+# Small data: data/processed/cleaned_*.csv (<5 MB), sample datasets
+# Structure holders: **/.gitkeep
+!**/.gitkeep
